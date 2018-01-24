@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>首页</title>
+	<meta charset="utf-8">
+	<meta name="renderer" content="webkit">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width,initial-scale=1.0 maximum-scale=1.0,minimum-scale=1.0,user-scalable=no">
+	<style>
+		.c-cutter-preview {
+			width: 300px;
+			height: 300px;
+			background: #ddd;
+		}
+
+		button,
+		input {
+			width: 300px;
+			height: 30px;
+			margin-top: 20px;
+			font-size: 16px;
+		}
+
+		button {
+			width: 120px;
+			margin-right: 10px;
+		}
+
+	</style>
+</head>
+<body>
+	<div id="cutter" class="c-cutter-preview"></div>
+
+	<div class="control">
+		<input id="upload" type="file" />
+		<p>
+			<button id="getImage">获取图片</button>
+			<button id="reset">重置图片</button>
+			<button id="clear">清空图片</button>
+			<button id="destroy">销毁</button>
+			<button id="reinstall">重新安装</button>
+		</p>
+	</div>
+
+	<div id="info"></div>
+
+	<script src="picture-cutter.js"></script>
+
+	<script>
+
+		var $info = document.getElementById('info');
+		var $cutter = document.getElementById('cutter');
+		var $upload = document.getElementById('upload');
+		var pc = new PictureCutter($cutter);
+
+		$upload.onchange = function(e) {
+			var file = e.target.files[0];
+
+			if (!file) { return; }
+
+			var reader = new FileReader();
+
+			reader.onload = function(e) {
+				$upload.value = '';
+				pc.setImageData(e.target.result);
+			};
+
+			reader.onerror = function() {
+				console.log('加载失败');
+			};
+
+			reader.readAsDataURL(file);
+		};
+
+
+		var $getImage = document.getElementById('getImage');
+		var $reset = document.getElementById('reset');
+		var $clear = document.getElementById('clear');
+		var $destroy = document.getElementById('destroy');
+		var $reinstall = document.getElementById('reinstall');
+
+		$getImage.onclick = function() {
+			var img = pc.getImage();
+			if (img) {
+				document.body.appendChild(img);
+			}
+		};
+
+		$reset.onclick = function() {
+			pc.reset();
+		};
+
+		$clear.onclick = function() {
+			pc.clear();
+		};
+
+		$destroy.onclick = function() {
+			pc.destroy();
+		};
+
+		$reinstall.onclick = function() {
+			pc.reinstall();
+		};
+
+		window.onerror = function(e) {
+			$info.innerHTML += '<br />' + JSON.stringify(e);
+		};
+
+	</script>
+
+</body>
+</html>
