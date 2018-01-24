@@ -307,6 +307,15 @@
 
 		}
 
+		// 重置尺寸
+		resize() {
+			if (this.$canvas && this.$el) {
+				this.$canvas.width = this.canvasWidth = this.$el.clientWidth;
+				this.$canvas.height = this.canvasHeight = this.$el.clientHeight;
+				this._draw();
+			}
+		}
+
 	}
 
 	// 兼容cmd、cmd、commonjs和原生使用

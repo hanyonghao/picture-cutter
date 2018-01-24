@@ -37,6 +37,7 @@
 			<button id="getImage">获取图片</button>
 			<button id="reset">重置图片</button>
 			<button id="clear">清空图片</button>
+			<button id="resize">重置尺寸</button>
 			<button id="destroy">销毁</button>
 			<button id="reinstall">重新安装</button>
 		</p>
@@ -78,6 +79,7 @@
 		var $clear = document.getElementById('clear');
 		var $destroy = document.getElementById('destroy');
 		var $reinstall = document.getElementById('reinstall');
+		var $resize = document.getElementById('resize');
 
 		$getImage.onclick = function() {
 			var img = pc.getImage();
@@ -100,6 +102,10 @@
 
 		$reinstall.onclick = function() {
 			pc.reinstall();
+		};
+
+		$resize.onclick = function() {
+			pc.resize();
 		};
 
 		window.onerror = function(e) {
