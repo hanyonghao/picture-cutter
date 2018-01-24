@@ -43,6 +43,11 @@
 		// 初始化画布
 		_init() {
 
+			if (!this.$canvas || !this.$image) {
+				this.isReady = false;
+				return;
+			}
+
 			let self = this;
 			let widthScale = this.canvasWidth / this.imgWidth;
 			let heightScale = this.canvasHeight / this.imgHeight;
@@ -74,9 +79,7 @@
 			this.drawParams.x = this.drawParams.minX / 2;
 			this.drawParams.y = this.drawParams.minY / 2;
 
-			if (this.$canvas) {
-				this.isReady = true;
-			}
+			this.isReady = true;
 
 			this._draw();
 		}
@@ -298,10 +301,10 @@
 			if (this.$canvas) {
 				this.$canvas.removeEventListener('touchstart', this.touchStartHandler);
 				this.$canvas.remove();
+				this.$canvas = null;
+				this.canvasContext = null;
 			}
 
-			this.$canvas = null;
-			this.canvasContext = null;
 		}
 
 	}
