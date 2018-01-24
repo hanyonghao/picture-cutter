@@ -312,7 +312,14 @@
 			if (this.$canvas && this.$el) {
 				this.$canvas.width = this.canvasWidth = this.$el.clientWidth;
 				this.$canvas.height = this.canvasHeight = this.$el.clientHeight;
-				this._draw();
+
+				if (this.isReady) {
+					let widthScale = this.canvasWidth / this.imgWidth;
+					let heightScale = this.canvasHeight / this.imgHeight;
+					this.drawParams.minScale = widthScale > heightScale ? widthScale : heightScale;
+					this._draw();
+				}
+
 			}
 		}
 
