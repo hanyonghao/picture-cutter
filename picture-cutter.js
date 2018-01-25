@@ -49,11 +49,9 @@
 			}
 
 			let self = this;
-			let widthScale = this.canvasWidth / this.imgWidth;
-			let heightScale = this.canvasHeight / this.imgHeight;
 
 			// 计算最小缩放率
-			let minScale = widthScale > heightScale ? widthScale : heightScale;
+			let minScale = this._computeMinScale();
 
 			// 画布参数
 			this.drawParams = {
@@ -140,6 +138,13 @@
 		// 计算两点之间的距离
 		_computeDistance(pointA, pointB) {
 			return Math.sqrt(Math.pow(pointA.x - pointB.x, 2) + Math.pow(pointA.y - pointB.y, 2));
+		}
+
+		// 计算最小缩放率
+		_computeMinScale() {
+			let widthScale = this.canvasWidth / this.imgWidth;
+			let heightScale = this.canvasHeight / this.imgHeight;
+			return widthScale > heightScale ? widthScale : heightScale;
 		}
 
 		// 开始触摸事件，同时也用于更新触摸点参数
@@ -314,9 +319,7 @@
 				this.$canvas.height = this.canvasHeight = this.$el.clientHeight;
 
 				if (this.isReady) {
-					let widthScale = this.canvasWidth / this.imgWidth;
-					let heightScale = this.canvasHeight / this.imgHeight;
-					this.drawParams.minScale = widthScale > heightScale ? widthScale : heightScale;
+					this.drawParams.minScale = this._computeMinScale();
 					this._draw();
 				}
 
