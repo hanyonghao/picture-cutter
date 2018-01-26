@@ -2,6 +2,26 @@
 
 	class PictureCutter {
 
+		get hasContainer() {
+			return !!this.$el;
+		}
+
+		get hasCanvas() {
+			return !!this.$canvas;
+		}
+
+		get hasImage() {
+			return !!this.$image;
+		}
+
+		get isReady() {
+			return this.hasContainer && this.hasCanvas && this.hasImage && !!this.drawParams;
+		}
+
+		get isTouching() {
+			return !!this.touchParams;
+		}
+
 		// 构造函数
 		constructor(el) {
 
@@ -18,7 +38,7 @@
 		// 创建canvas，添加事件监听
 		_install() {
 
-			if (!this.$el || this.$canvas) {
+			if (!this.hasContainer || this.hasCanvas) {
 				return;
 			}
 
@@ -43,8 +63,7 @@
 		// 初始化画布
 		_init() {
 
-			if (!this.$canvas || !this.$image) {
-				this.isReady = false;
+			if (!(this.hasCanvas && this.hasImage)) {
 				return;
 			}
 
@@ -76,8 +95,6 @@
 			// 让图像初始显示为居中
 			this.drawParams.x = this.drawParams.minX / 2;
 			this.drawParams.y = this.drawParams.minY / 2;
-
-			this.isReady = true;
 
 			this._draw();
 		}
@@ -125,13 +142,14 @@
 			}
 
 			this.$el = el; // 保存当前容器
+
 		}
 
 		// 计算两点之间的中点
 		_computeCenter(pointA, pointB, offsetX = -this.$canvas.offsetTop, offsetY = -this.$canvas.offsetLeft) {
 			return {
 				x: (pointA.x + pointB.x) / 2 + (offsetX || 0),
-				y: (pointA.y + pointB.y) / 2 + (offsetY || 0),
+				y: (pointA.y + pointB.y) / 2 + (offsetY || 0)
 			};
 		}
 
@@ -178,12 +196,13 @@
 				// 两点的距离
 				this.touchParams.distance = this._computeDistance(this.touchParams.positions[0], this.touchParams.positions[1]);
 			}
+
 		}
 
 		// 触摸移动事件
 		_touchMove(e) {
 
-			if (!this.touchParams) {
+			if (!this.isTouching) {
 				return;
 			}
 
@@ -199,7 +218,7 @@
 				// 设置新位置
 				this.drawParams.x += newPosition.x - oldPosition.x;
 				this.drawParams.y += newPosition.y - oldPosition.y;
-				
+
 			} else if (this.touchParams.count === 2) {
 				let newPositions = [...e.targetTouches].map((touch) => {
 					return {
@@ -207,7 +226,6 @@
 						y: touch.clientY
 					};
 				});
-				let oldPositions = this.touchParams.positions;
 				let distance = this._computeDistance(newPositions[0], newPositions[1]);
 				let center = this._computeCenter(newPositions[0], newPositions[1]);
 
@@ -255,8 +273,8 @@
 
 		// 获取base64
 		getImageData() {
-			if (this.isReady && this.$canvas) {
-				return this.$canvas.toDataURL("image/png");
+			if (this.isReady) {
+				return this.$canvas.toDataURL('image/png');
 			}
 		}
 
@@ -291,7 +309,6 @@
 			if (this.isReady) {
 				this.$image = null;
 				this.drawParams = null;
-				this.isReady = false;
 				this.canvasContext.clearRect(0, 0, this.canvasWidth, this.canvasHeight);
 			}
 		}
@@ -303,7 +320,7 @@
 			document.removeEventListener('touchmove', this.touchMoveHandler);
 			document.removeEventListener('touchend', this.touchEndHandler);
 
-			if (this.$canvas) {
+			if (this.hasCanvas) {
 				this.$canvas.removeEventListener('touchstart', this.touchStartHandler);
 				this.$canvas.remove();
 				this.$canvas = null;
@@ -314,7 +331,7 @@
 
 		// 重置尺寸
 		resize() {
-			if (this.$canvas && this.$el) {
+			if (this.hasCanvas && this.hasContainer) {
 				this.$canvas.width = this.canvasWidth = this.$el.clientWidth;
 				this.$canvas.height = this.canvasHeight = this.$el.clientHeight;
 
